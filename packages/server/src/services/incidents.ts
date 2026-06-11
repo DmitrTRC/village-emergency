@@ -1,9 +1,9 @@
 import { desc, eq, or } from "drizzle-orm";
 import type { Db } from "../db/client.js";
-import { incidents, incidentMedia, incidentEvents } from "../db/schema.js";
-import type { NewIncidentInput, Incident } from "@village/shared";
+import { incidents, incidentMedia, incidentEvents, incidentComments } from "../db/schema.js";
+import type { NewIncidentInput, Incident, CloseReason } from "@village/shared";
 import { transition, type IncidentState } from "../domain/lifecycle.js";
-import type { Viewer } from "../domain/policy.js";
+import { canAccept, canClose, canComment, type Viewer } from "../domain/policy.js";
 
 function s3KeyFor(incidentId: string, mediaId: string, kind: string): string {
   const now = new Date();
@@ -110,4 +110,74 @@ export async function listVisible(db: Db, viewer: Viewer): Promise<Incident[]> {
     where, orderBy: [desc(incidents.deliveredAtServer)],
   });
   return rows.map(rowToIncident);
+}
+
+async function loadState(db: Db, id: string) {
+  const r = await db.query.incidents.findFirst({ where: eq(incidents.id, id) });
+  if (!r) throw new Error(`incident ${id} not found`);
+  return r;
+}
+
+export async function acceptIncident(db: Db, viewer: Viewer, id: string): Promise<Incident> {
+  const r = await loadState(db, id);
+  if (!canAccept(viewer, r)) throw new Error("forbidden: accept");
+  const next = transition(
+    { level: r.level, status: r.status, visibility: r.visibility, closeReason: r.closeReason },
+    { type: "accept" },
+  );
+  const now = new Date();
+  return db.transaction(async (tx) => {
+    const [row] = await tx
+      .update(incidents)
+      .set({ status: next.status, visibility: next.visibility, acceptedAt: now })
+      .where(eq(incidents.id, id))
+      .returning();
+    await tx.insert(incidentEvents).values({
+      incidentId: id, actorId: viewer.id, type: "accepted", payload: null,
+    });
+    return rowToIncident(row!);
+  });
+}
+
+export async function closeIncident(
+  db: Db, viewer: Viewer, id: string, reason: CloseReason,
+): Promise<Incident> {
+  const r = await loadState(db, id);
+  if (!canClose(viewer, r)) throw new Error("forbidden: close");
+  const next = transition(
+    { level: r.level, status: r.status, visibility: r.visibility, closeReason: r.closeReason },
+    { type: "close", reason },
+  );
+  const now = new Date();
+  return db.transaction(async (tx) => {
+    const [row] = await tx
+      .update(incidents)
+      .set({
+        status: next.status, visibility: next.visibility,
+        closeReason: next.closeReason, closedAt: now,
+      })
+      .where(eq(incidents.id, id))
+      .returning();
+    await tx.insert(incidentEvents).values({
+      incidentId: id, actorId: viewer.id, type: "closed", payload: { reason },
+    });
+    return rowToIncident(row!);
+  });
+}
+
+export async function addComment(
+  db: Db, viewer: Viewer, id: string, text: string,
+): Promise<{ id: string; text: string }> {
+  const r = await loadState(db, id);
+  if (!canComment(viewer, r)) throw new Error("forbidden: comment");
+  return db.transaction(async (tx) => {
+    const [c] = await tx
+      .insert(incidentComments)
+      .values({ incidentId: id, authorId: viewer.id, text })
+      .returning();
+    await tx.insert(incidentEvents).values({
+      incidentId: id, actorId: viewer.id, type: "commented", payload: { commentId: c!.id },
+    });
+    return { id: c!.id, text: c!.text };
+  });
 }
