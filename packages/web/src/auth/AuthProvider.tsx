@@ -26,6 +26,10 @@ export function useAuth(): AuthContextValue {
   return ctx;
 }
 
+export function useOptionalAuth(): AuthContextValue | null {
+  return useContext(AuthContext);
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>("loading");
   const [user, setUser] = useState<SessionUser | null>(null);

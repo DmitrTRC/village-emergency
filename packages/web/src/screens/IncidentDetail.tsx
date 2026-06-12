@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import type { Incident, IncidentThread } from "@village/shared";
 import { ApiError } from "../api/client";
 import { getIncidentById, getIncidentThread } from "../api/endpoints";
+import { useOptionalAuth } from "../auth/AuthProvider";
+import { CommanderActions } from "../components/CommanderActions";
 import { Comments } from "../components/Comments";
 import { MediaGallery } from "../components/MediaGallery";
 import { Timeline } from "../components/Timeline";
@@ -16,6 +18,7 @@ type State =
 
 export function IncidentDetail({ id }: { id: string }) {
   const [state, setState] = useState<State>({ kind: "loading" });
+  const role = useOptionalAuth()?.user?.role ?? null;
 
   useEffect(() => {
     let cancelled = false;
@@ -66,6 +69,11 @@ export function IncidentDetail({ id }: { id: string }) {
         <span data-testid="visibility-badge">{VISIBILITY_LABEL[incident.visibility]}</span>
       </header>
       {incident.text && <p>{incident.text}</p>}
+      <CommanderActions
+        incident={incident}
+        role={role}
+        onUpdated={(next) => setState({ kind: "ready", incident: next, thread })}
+      />
       <MediaGallery media={thread.media} />
       <Timeline events={thread.events} />
       <Comments incidentId={incident.id} status={incident.status} initial={thread.comments} />

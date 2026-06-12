@@ -1,4 +1,4 @@
-import type { IncidentEventType, IncidentLevel, Visibility } from "@village/shared";
+import type { CloseReason, IncidentEventType, IncidentLevel, Visibility } from "@village/shared";
 import type { FeedItem } from "./merge";
 
 export const LEVEL_LABEL: Record<IncidentLevel, string> = {
@@ -18,6 +18,12 @@ export const STATUS_LABEL: Record<FeedItem["status"], string> = {
 export const VISIBILITY_LABEL: Record<Visibility, string> = {
   private: "Личное",
   public: "Общее",
+};
+
+export const CLOSE_REASON_LABEL: Record<CloseReason, string> = {
+  resolved: "Решено",
+  false: "Ложная тревога",
+  duplicate: "Дубликат",
 };
 
 export const EVENT_LABEL: Record<IncidentEventType, string> = {
