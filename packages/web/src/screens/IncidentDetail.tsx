@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { Incident, IncidentThread } from "@village/shared";
 import { ApiError } from "../api/client";
 import { getIncidentById, getIncidentThread } from "../api/endpoints";
+import { Comments } from "../components/Comments";
 import { MediaGallery } from "../components/MediaGallery";
 import { Timeline } from "../components/Timeline";
 import { LEVEL_LABEL, STATUS_LABEL, VISIBILITY_LABEL } from "../feed/labels";
@@ -67,6 +68,7 @@ export function IncidentDetail({ id }: { id: string }) {
       {incident.text && <p>{incident.text}</p>}
       <MediaGallery media={thread.media} />
       <Timeline events={thread.events} />
+      <Comments incidentId={incident.id} status={incident.status} initial={thread.comments} />
       <Link to="/">К ленте</Link>
     </section>
   );
