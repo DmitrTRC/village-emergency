@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   Incident,
+  IncidentThread,
   CreateIncidentResponse,
   UploadStatus,
   Role,
@@ -62,6 +63,9 @@ export const listIncidents = () =>
 
 export const getIncidentById = (id: string) =>
   apiFetch(`/incidents/${seg(id)}`, { schema: Incident });
+
+export const getIncidentThread = (id: string) =>
+  apiFetch(`/incidents/${seg(id)}/thread`, { schema: IncidentThread });
 
 export const createIncident = (input: NewIncidentInput) =>
   apiFetch("/incidents", {
