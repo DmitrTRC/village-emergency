@@ -1,7 +1,12 @@
+import { AuthProvider } from "./auth/AuthProvider";
+import { Routes } from "./routes";
+
 export function App() {
   return (
-    <main>
-      <h1>village-emrg</h1>
-    </main>
+    <AuthProvider>
+      <main>
+        <Routes />
+      </main>
+    </AuthProvider>
   );
 }

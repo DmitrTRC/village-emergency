@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { App } from "../src/App";
 
-test("рендерит заголовок приложения", () => {
+test("App монтируется и отдаёт main-landmark", () => {
   render(<App />);
-  expect(screen.getByRole("heading", { name: /village-emrg/i })).toBeInTheDocument();
+  expect(screen.getByRole("main")).toBeInTheDocument();
 });
