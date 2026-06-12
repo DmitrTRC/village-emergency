@@ -89,3 +89,37 @@ describe("incident transitions", () => {
     expect(late.status).toBe(403);
   });
 });
+
+describe("GET /incidents/:id/thread", () => {
+  it("отдаёт таймлайн событий и комментарии автору", async () => {
+    const author = await makeUser(pg.db);
+    const cmd = await makeUser(pg.db, { role: "commander" });
+    const id = uuidv7();
+    await post("/incidents", await authHeaderFor(app, author.id, "resident"), { id, level: "offence", text: "шум" });
+    await post(`/incidents/${id}/accept`, await authHeaderFor(app, cmd.id, "commander"), {});
+    await post(`/incidents/${id}/comments`, await authHeaderFor(app, author.id, "resident"), { text: "видел" });
+
+    const res = await app.fetch(new Request(`http://x/incidents/${id}/thread`, {
+      headers: await authHeaderFor(app, author.id, "resident"),
+    }));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.events.map((e: { type: string }) => e.type)).toEqual(
+      expect.arrayContaining(["created", "delivered", "accepted", "commented"]),
+    );
+    expect(body.comments).toHaveLength(1);
+    expect(body.comments[0].text).toBe("видел");
+    expect(Array.isArray(body.media)).toBe(true);
+  });
+
+  it("private инцидент → 403 чужому жителю", async () => {
+    const author = await makeUser(pg.db);
+    const other = await makeUser(pg.db);
+    const id = uuidv7();
+    await post("/incidents", await authHeaderFor(app, author.id, "resident"), { id, level: "offence", text: "тихо" });
+    const res = await app.fetch(new Request(`http://x/incidents/${id}/thread`, {
+      headers: await authHeaderFor(app, other.id, "resident"),
+    }));
+    expect(res.status).toBe(403);
+  });
+});

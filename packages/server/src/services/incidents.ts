@@ -1,7 +1,7 @@
-import { desc, eq, or } from "drizzle-orm";
+import { and, asc, desc, eq, isNull, or } from "drizzle-orm";
 import type { Db } from "../db/client.js";
 import { incidents, incidentMedia, incidentEvents, incidentComments } from "../db/schema.js";
-import type { NewIncidentInput, Incident, CloseReason } from "@village/shared";
+import type { NewIncidentInput, Incident, CloseReason, IncidentThread } from "@village/shared";
 import { transition, type IncidentState } from "../domain/lifecycle.js";
 import { canAccept, canClose, canComment, type Viewer } from "../domain/policy.js";
 
@@ -99,6 +99,50 @@ export async function createIncident(
 export async function getIncident(db: Db, id: string): Promise<Incident | null> {
   const r = await db.query.incidents.findFirst({ where: eq(incidents.id, id) });
   return r ? rowToIncident(r) : null;
+}
+
+export async function getThread(
+  db: Db,
+  presignGet: (key: string) => Promise<string>,
+  incidentId: string,
+): Promise<IncidentThread> {
+  const [events, comments, media] = await Promise.all([
+    db.query.incidentEvents.findMany({
+      where: eq(incidentEvents.incidentId, incidentId),
+      orderBy: [asc(incidentEvents.at)],
+    }),
+    db.query.incidentComments.findMany({
+      where: and(eq(incidentComments.incidentId, incidentId), isNull(incidentComments.hiddenAt)),
+      orderBy: [asc(incidentComments.createdAt)],
+    }),
+    db.query.incidentMedia.findMany({
+      where: eq(incidentMedia.incidentId, incidentId),
+      orderBy: [asc(incidentMedia.createdAt)],
+    }),
+  ]);
+  return {
+    events: events.map((e) => ({
+      id: e.id,
+      type: e.type,
+      actorId: e.actorId,
+      payload: e.payload ?? null,
+      at: e.at.toISOString(),
+    })),
+    comments: comments.map((c) => ({
+      id: c.id,
+      authorId: c.authorId,
+      text: c.text,
+      createdAt: c.createdAt.toISOString(),
+    })),
+    media: await Promise.all(
+      media.map(async (m) => ({
+        id: m.id,
+        kind: m.kind,
+        mime: m.mime,
+        url: await presignGet(m.s3Key),
+      })),
+    ),
+  };
 }
 
 export async function listVisible(db: Db, viewer: Viewer): Promise<Incident[]> {

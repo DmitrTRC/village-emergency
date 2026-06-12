@@ -4,7 +4,7 @@ import { NewIncidentInput, CloseIncidentInput, CommentInput } from "@village/sha
 import type { AppContext } from "../context.js";
 import type { AuthedVars } from "../middleware.js";
 import {
-  createIncident, listVisible, getIncident,
+  createIncident, listVisible, getIncident, getThread,
   acceptIncident, closeIncident, addComment,
 } from "../../services/incidents.js";
 import { checkIncidentRate } from "../../services/ratelimit.js";
@@ -24,6 +24,15 @@ export function incidentsRoutes(ctx: AppContext) {
     if (!inc) return c.json({ error: "not found" }, 404);
     if (!canView(user, inc)) return c.json({ error: "forbidden" }, 403);
     return c.json(inc);
+  });
+
+  app.get("/:id/thread", async (c) => {
+    const user = c.get("user");
+    const id = c.req.param("id");
+    const inc = await getIncident(ctx.db, id);
+    if (!inc) return c.json({ error: "not found" }, 404);
+    if (!canView(user, inc)) return c.json({ error: "forbidden" }, 403);
+    return c.json(await getThread(ctx.db, ctx.media.presignGet, id));
   });
 
   app.post("/", zValidator("json", NewIncidentInput), async (c) => {
