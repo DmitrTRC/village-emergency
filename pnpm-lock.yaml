@@ -146,7 +146,22 @@ importers:
       vitest:
         specifier: ^2.1.0
         version: 2.1.9(@types/node@22.19.21)(jsdom@25.0.1)(terser@5.48.0)
+      workbox-background-sync:
+        specifier: ^7.3.0
+        version: 7.4.1
+      workbox-cacheable-response:
+        specifier: ^7.3.0
+        version: 7.4.1
+      workbox-expiration:
+        specifier: ^7.3.0
+        version: 7.4.1
       workbox-precaching:
+        specifier: ^7.3.0
+        version: 7.4.1
+      workbox-routing:
+        specifier: ^7.3.0
+        version: 7.4.1
+      workbox-strategies:
         specifier: ^7.3.0
         version: 7.4.1
 
