@@ -33,3 +33,12 @@ export async function buildTestApp(pg: TestPg) {
     close: async () => { await sse.close(); },
   };
 }
+
+export async function authHeaderFor(
+  appBundle: Awaited<ReturnType<typeof buildTestApp>>,
+  userId: string,
+  role: "resident" | "commander",
+): Promise<Record<string, string>> {
+  const pair = await appBundle.ctx.sessions.issue(userId, role);
+  return { authorization: `Bearer ${pair.accessToken}` };
+}
