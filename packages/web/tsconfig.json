@@ -8,5 +8,5 @@
     "noEmit": true
   },
   "include": ["src", "test"],
-  "exclude": ["src/sw"]
+  "exclude": ["src/sw", "src/**/*.worker.ts"]
 }
