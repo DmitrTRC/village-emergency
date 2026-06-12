@@ -35,3 +35,6 @@ venv/
 *.sqlite3
 *.db
 *.dump
+
+# ── project-specific ───────────────────────────────────────────
+data/houses.private.csv
