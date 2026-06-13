@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import type { Incident, IncidentThread } from "@village/shared";
 import { ApiError } from "../api/client";
 import { getIncidentById, getIncidentThread } from "../api/endpoints";
@@ -9,6 +9,8 @@ import { MediaGallery } from "../components/MediaGallery";
 import { Timeline } from "../components/Timeline";
 import { LEVEL_LABEL, STATUS_LABEL, VISIBILITY_LABEL } from "../feed/labels";
 import { Link } from "../router/router";
+
+const IncidentMap = lazy(() => import("../map/IncidentMap"));
 
 type State =
   | { kind: "loading" }
@@ -69,6 +71,11 @@ export function IncidentDetail({ id }: { id: string }) {
         <span data-testid="visibility-badge">{VISIBILITY_LABEL[incident.visibility]}</span>
       </header>
       {incident.text && <p>{incident.text}</p>}
+      {incident.geo && (
+        <Suspense fallback={<p>Загрузка карты…</p>}>
+          <IncidentMap mode="display" value={{ lat: incident.geo.lat, lng: incident.geo.lng }} />
+        </Suspense>
+      )}
       <CommanderActions
         incident={incident}
         role={role}

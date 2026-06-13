@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { IncidentLevel, NewIncidentInput, type Geo } from "@village/shared";
 import { captureGeo } from "../geo/capture";
 import { compress } from "../media/compress";
@@ -6,6 +6,8 @@ import { enqueue } from "../db/outbox";
 import type { OutboxMedia } from "../db/idb";
 import { LEVEL_LABEL } from "../feed/labels";
 import { navigate } from "../router/router";
+
+const IncidentMap = lazy(() => import("../map/IncidentMap"));
 
 const MAX_PHOTOS = 5;
 const LEVELS = IncidentLevel.options;
@@ -20,8 +22,18 @@ export function CreateIncident() {
   const [geo, setGeo] = useState<Geo | null>(null);
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [geoBusy, setGeoBusy] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  function setGeoFromMap(coords: { lat: number; lng: number }) {
+    setGeo({
+      lat: coords.lat,
+      lng: coords.lng,
+      accuracyM: null,
+      capturedAt: new Date().toISOString(),
+    });
+  }
 
   async function onPickGeo() {
     setGeoBusy(true);
@@ -130,7 +142,20 @@ export function CreateIncident() {
             {geo.lat.toFixed(4)}, {geo.lng.toFixed(4)}
           </span>
         )}
+        <button type="button" onClick={() => setShowMap((v) => !v)}>
+          {showMap ? "Скрыть карту" : "Указать на карте"}
+        </button>
       </div>
+
+      {showMap && (
+        <Suspense fallback={<p>Загрузка карты…</p>}>
+          <IncidentMap
+            mode="pick"
+            value={geo ? { lat: geo.lat, lng: geo.lng } : null}
+            onChange={setGeoFromMap}
+          />
+        </Suspense>
+      )}
 
       <div>
         <label>
