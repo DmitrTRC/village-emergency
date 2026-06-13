@@ -5,6 +5,7 @@ import { ReportHero } from "../components/ReportHero";
 import { list as outboxList } from "../db/outbox";
 import { mergeFeed, type FeedItem } from "../feed/merge";
 import { useEventStream } from "../sse/useEventStream";
+import styles from "./Feed.module.css";
 
 export function Feed({ filter }: { filter?: (item: FeedItem) => boolean } = {}) {
   const [items, setItems] = useState<FeedItem[] | null>(null);
@@ -32,7 +33,16 @@ export function Feed({ filter }: { filter?: (item: FeedItem) => boolean } = {}) 
   useEventStream(useCallback(() => void load(), [load]));
 
   if (error) return <p>Не удалось загрузить ленту.</p>;
-  if (!items) return <p>Загрузка…</p>;
+  if (!items) {
+    return (
+      <>
+        <ReportHero />
+        <div className={styles.skeleton} />
+        <div className={styles.skeleton} />
+        <div className={styles.skeleton} />
+      </>
+    );
+  }
 
   const visible = filter ? items.filter(filter) : items;
 
@@ -40,11 +50,11 @@ export function Feed({ filter }: { filter?: (item: FeedItem) => boolean } = {}) 
     <>
       <ReportHero />
       <section>
-        <h1>Лента</h1>
+        <h1 className={styles.title}>Лента</h1>
         {visible.length === 0 ? (
-          <p>Пока нет инцидентов.</p>
+          <p className={styles.empty}>Пока нет инцидентов.</p>
         ) : (
-          <ul>
+          <ul className={styles.list}>
             {visible.map((item) => (
               <li key={item.id}>
                 <IncidentCard item={item} />

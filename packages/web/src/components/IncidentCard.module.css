@@ -1,0 +1,17 @@
+.link { display: block; }
+.card {
+  background: var(--surface);
+  border-left: 4px solid var(--muted);
+  border-radius: var(--radius);
+  padding: 12px 13px;
+}
+.card[data-level="emergency"] { border-left-color: var(--emergency); }
+.card[data-level="offence"] { border-left-color: var(--offence); }
+.card[data-level="attention"] { border-left-color: var(--attention); }
+.head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.badge { font-size: 10px; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
+.card[data-level="emergency"] .badge { background: var(--emergency); color: #fff; }
+.card[data-level="offence"] .badge { background: var(--offence); color: #1a1206; }
+.card[data-level="attention"] .badge { background: var(--attention); color: #fff; }
+.status { margin-left: auto; font-size: 10px; color: var(--muted); }
+.text { margin: 0; font-size: 14px; line-height: 1.35; }
