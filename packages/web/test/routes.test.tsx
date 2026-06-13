@@ -30,4 +30,19 @@ describe("гейтинг роутов", () => {
     render(<App />);
     expect(await screen.findByRole("heading", { name: "Регистрация" })).toBeInTheDocument();
   });
+
+  test("с токеном видны вкладки навигации", async () => {
+    await setTokens({ accessToken: "a", refreshToken: "r" });
+    render(<App />);
+    expect(await screen.findByRole("heading", { name: "Лента" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /карта/i })).toHaveAttribute("href", "/map");
+    expect(screen.getByRole("link", { name: /ещё/i })).toHaveAttribute("href", "/more");
+  });
+
+  test("на /register таб-бар скрыт", async () => {
+    window.history.pushState(null, "", "/register");
+    render(<App />);
+    expect(await screen.findByRole("heading", { name: "Регистрация" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /карта/i })).not.toBeInTheDocument();
+  });
 });

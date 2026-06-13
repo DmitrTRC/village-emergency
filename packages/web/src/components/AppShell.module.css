@@ -1,0 +1,2 @@
+.shell { display: flex; flex-direction: column; height: 100%; max-width: var(--maxw); margin: 0 auto; }
+.main { flex: 1; overflow-y: auto; }

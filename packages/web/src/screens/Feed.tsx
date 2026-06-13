@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { listIncidents } from "../api/endpoints";
 import { IncidentCard } from "../components/IncidentCard";
+import { ReportHero } from "../components/ReportHero";
 import { list as outboxList } from "../db/outbox";
 import { mergeFeed, type FeedItem } from "../feed/merge";
 import { useEventStream } from "../sse/useEventStream";
@@ -36,19 +37,22 @@ export function Feed({ filter }: { filter?: (item: FeedItem) => boolean } = {}) 
   const visible = filter ? items.filter(filter) : items;
 
   return (
-    <section>
-      <h1>Лента</h1>
-      {visible.length === 0 ? (
-        <p>Пока нет инцидентов.</p>
-      ) : (
-        <ul>
-          {visible.map((item) => (
-            <li key={item.id}>
-              <IncidentCard item={item} />
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
+    <>
+      <ReportHero />
+      <section>
+        <h1>Лента</h1>
+        {visible.length === 0 ? (
+          <p>Пока нет инцидентов.</p>
+        ) : (
+          <ul>
+            {visible.map((item) => (
+              <li key={item.id}>
+                <IncidentCard item={item} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </>
   );
 }

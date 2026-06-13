@@ -7,6 +7,9 @@ import { AuthCallback } from "./screens/AuthCallback";
 import { CreateIncident } from "./screens/CreateIncident";
 import { Feed } from "./screens/Feed";
 import { IncidentDetail } from "./screens/IncidentDetail";
+import { MapScreen } from "./screens/MapScreen";
+import { More } from "./screens/More";
+import { MyIncidents } from "./screens/MyIncidents";
 import { NotFound } from "./screens/NotFound";
 import { Register } from "./screens/Register";
 
@@ -32,6 +35,12 @@ export function Routes() {
       return <IncidentDetail id={route.id} />;
     case "create":
       return <CreateIncident />;
+    case "map":
+      return <MapScreen />;
+    case "mine":
+      return <MyIncidents />;
+    case "more":
+      return <More />;
     case "register":
       return <Register />;
     case "callback":

@@ -6,12 +6,13 @@ import type { IncidentMarker } from "../../src/map/IncidentMap";
 const h = vi.hoisted(() => ({ listIncidents: vi.fn(), captured: null as null | IncidentMarker[] }));
 vi.mock("../../src/api/endpoints", () => ({ listIncidents: h.listIncidents }));
 vi.mock("../../src/components/ReportHero", () => ({ ReportHero: () => <div data-testid="report-hero" /> }));
-vi.mock("../../src/map/IncidentMap", () => ({
-  IncidentMap: ({ markers }: { markers?: IncidentMarker[] }) => {
+vi.mock("../../src/map/IncidentMap", () => {
+  const IncidentMap = ({ markers }: { markers?: IncidentMarker[] }) => {
     h.captured = markers ?? null;
     return <div data-testid="incident-map" />;
-  },
-}));
+  };
+  return { IncidentMap, default: IncidentMap };
+});
 
 import { MapScreen } from "../../src/screens/MapScreen";
 

@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import type { Incident } from "@village/shared";
 import { listIncidents } from "../api/endpoints";
 import { ReportHero } from "../components/ReportHero";
-import { IncidentMap, type IncidentMarker } from "../map/IncidentMap";
+import type { IncidentMarker } from "../map/IncidentMap";
 import { navigate } from "../router/router";
 import styles from "./MapScreen.module.css";
+
+const IncidentMap = lazy(() => import("../map/IncidentMap"));
 
 export function MapScreen() {
   const [markers, setMarkers] = useState<IncidentMarker[]>([]);
@@ -32,7 +34,9 @@ export function MapScreen() {
       <ReportHero />
       <h1 className={styles.title}>Карта</h1>
       <div className={styles.map}>
-        <IncidentMap mode="display" markers={markers} onMarkerClick={(id) => navigate(`/i/${id}`)} />
+        <Suspense fallback={<p>Загрузка карты…</p>}>
+          <IncidentMap mode="display" markers={markers} onMarkerClick={(id) => navigate(`/i/${id}`)} />
+        </Suspense>
       </div>
     </section>
   );

@@ -15,6 +15,7 @@ vi.mock("../../src/sse/useEventStream", () => ({
     h.sseHandler = cb;
   },
 }));
+vi.mock("../../src/components/ReportHero", () => ({ ReportHero: () => <div data-testid="report-hero" /> }));
 
 import { Feed } from "../../src/screens/Feed";
 
