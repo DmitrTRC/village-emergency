@@ -1,0 +1,19 @@
+FROM node:22-alpine AS build
+RUN corepack enable
+WORKDIR /app
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml tsconfig.base.json ./
+COPY packages/shared/package.json packages/shared/
+COPY packages/web/package.json packages/web/
+RUN pnpm install --frozen-lockfile
+COPY . .
+ARG VITE_API_BASE=/api
+ARG VITE_VAPID_PUBLIC_KEY
+ARG VITE_TG_BOT
+ENV VITE_API_BASE=${VITE_API_BASE} \
+    VITE_VAPID_PUBLIC_KEY=${VITE_VAPID_PUBLIC_KEY} \
+    VITE_TG_BOT=${VITE_TG_BOT}
+RUN pnpm --filter @village/shared build && pnpm --filter @village/web build
+
+FROM caddy:2-alpine
+COPY --from=build /app/packages/web/dist /srv
+COPY Caddyfile /etc/caddy/Caddyfile
