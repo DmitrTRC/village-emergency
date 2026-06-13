@@ -26,7 +26,7 @@ interface Props {
   onMarkerClick?: (id: string) => void;
 }
 
-const DEFAULT_CENTER: LatLng = { lat: 55.0, lng: 37.0 };
+const DEFAULT_CENTER: LatLng = config.defaultCenter;
 
 function buildStyle(): StyleSpecification {
   return {
