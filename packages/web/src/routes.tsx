@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useAuth } from "./auth/AuthProvider";
+import { getAccess } from "./auth/session";
 import { isPublicRoute, matchRoute } from "./router/match";
 import { navigate, useLocation } from "./router/router";
 import { AuthCallback } from "./screens/AuthCallback";
@@ -13,7 +14,9 @@ export function Routes() {
   const path = useLocation();
   const { status } = useAuth();
   const route = matchRoute(path);
-  const gated = !isPublicRoute(route) && status === "anon";
+  // getAccess() устанавливается синхронно в setTokens — учитываем его, чтобы
+  // не редиректить на /register, пока состояние status ещё не догнало логин.
+  const gated = !isPublicRoute(route) && status === "anon" && getAccess() === null;
 
   useEffect(() => {
     if (gated && path !== "/register") navigate("/register");

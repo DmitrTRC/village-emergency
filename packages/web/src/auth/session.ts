@@ -1,8 +1,30 @@
+import type { Role } from "@village/shared";
 import { getDb } from "../db/idb";
 
 export interface TokenPair {
   accessToken: string;
   refreshToken: string;
+}
+
+export interface AccessClaims {
+  id: string;
+  role: Role;
+}
+
+// Достаём sub/role из payload access-JWT без проверки подписи: на клиенте
+// доверяем токену, выданному сервером. Нужно, чтобы роль пережила reload,
+// когда user в памяти потерян, а сессия восстановлена по refresh.
+export function decodeAccessClaims(token: string): AccessClaims | null {
+  try {
+    const part = token.split(".")[1];
+    if (!part) return null;
+    const json = atob(part.replace(/-/g, "+").replace(/_/g, "/"));
+    const claims = JSON.parse(json) as { sub?: string; role?: string };
+    if (!claims.sub || !claims.role) return null;
+    return { id: claims.sub, role: claims.role as Role };
+  } catch {
+    return null;
+  }
 }
 
 let accessToken: string | null = null;
