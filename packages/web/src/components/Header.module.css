@@ -1,0 +1,13 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.village { font-size: 18px; font-weight: 800; letter-spacing: 0.02em; }
+.net { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+.net[data-online="true"] { color: var(--online); }
+.net[data-online="false"] { color: var(--offline); }
+.dot { width: 7px; height: 7px; border-radius: 999px; background: currentColor; }
