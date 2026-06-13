@@ -3,12 +3,14 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 
 const h = vi.hoisted(() => ({
   enqueue: vi.fn(),
+  drainOutbox: vi.fn(),
   captureGeo: vi.fn(),
   compress: vi.fn(),
   navigate: vi.fn(),
 }));
 
 vi.mock("../../src/db/outbox", () => ({ enqueue: h.enqueue }));
+vi.mock("../../src/db/sync", () => ({ drainOutbox: h.drainOutbox }));
 vi.mock("../../src/geo/capture", () => ({ captureGeo: h.captureGeo }));
 vi.mock("../../src/media/compress", () => ({ compress: h.compress }));
 vi.mock("../../src/router/router", () => ({ navigate: h.navigate }));

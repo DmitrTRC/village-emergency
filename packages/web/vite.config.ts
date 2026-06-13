@@ -10,7 +10,7 @@ export default defineConfig({
       strategies: "injectManifest",
       srcDir: "src/sw",
       filename: "sw.ts",
-      injectRegister: null,
+      injectRegister: "auto",
       includeAssets: ["icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png"],
       manifest: {
         name: "village-emrg",

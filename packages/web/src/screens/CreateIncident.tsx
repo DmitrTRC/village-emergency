@@ -3,6 +3,7 @@ import { IncidentLevel, NewIncidentInput, type Geo } from "@village/shared";
 import { captureGeo } from "../geo/capture";
 import { compress } from "../media/compress";
 import { enqueue } from "../db/outbox";
+import { drainOutbox } from "../db/sync";
 import type { OutboxMedia } from "../db/idb";
 import { LEVEL_LABEL } from "../feed/labels";
 import { navigate } from "../router/router";
@@ -98,6 +99,7 @@ export function CreateIncident() {
     setSubmitting(true);
     try {
       await enqueue(parsed.data, media);
+      void drainOutbox();
       photos.forEach((p) => URL.revokeObjectURL(p.preview));
       navigate("/");
     } catch {
