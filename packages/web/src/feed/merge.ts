@@ -3,6 +3,7 @@ import type { OutboxItem } from "../db/idb";
 
 export interface FeedItem {
   id: string;
+  authorId: string | null;
   level: IncidentLevel;
   status: IncidentStatus | "pending";
   visibility: Visibility | null;
@@ -14,6 +15,7 @@ export interface FeedItem {
 function fromIncident(i: Incident): FeedItem {
   return {
     id: i.id,
+    authorId: i.authorId,
     level: i.level,
     status: i.status,
     visibility: i.visibility,
@@ -27,6 +29,7 @@ function fromOutbox(o: OutboxItem): FeedItem {
   const input = o.input as { level: IncidentLevel; text?: string | null };
   return {
     id: o.id,
+    authorId: null,
     level: input.level,
     status: "pending",
     visibility: null,

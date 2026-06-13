@@ -49,4 +49,20 @@ describe("mergeFeed", () => {
     expect(items).toHaveLength(1);
     expect(items[0]!.pending).toBe(false);
   });
+
+  test("authorId протаскивается из инцидента, у pending — null", () => {
+    const items = mergeFeed(
+      [
+        incident({
+          id: "s1",
+          createdAtClient: "2026-06-13T10:00:00.000Z",
+          authorId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        }),
+      ],
+      [outbox("o1", "2026-06-13T11:00:00.000Z", "pending")],
+    );
+    const [pending, server] = items;
+    expect(server!.authorId).toBe("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+    expect(pending!.authorId).toBeNull();
+  });
 });
