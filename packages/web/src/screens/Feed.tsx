@@ -5,7 +5,7 @@ import { list as outboxList } from "../db/outbox";
 import { mergeFeed, type FeedItem } from "../feed/merge";
 import { useEventStream } from "../sse/useEventStream";
 
-export function Feed() {
+export function Feed({ filter }: { filter?: (item: FeedItem) => boolean } = {}) {
   const [items, setItems] = useState<FeedItem[] | null>(null);
   const [error, setError] = useState(false);
 
@@ -33,14 +33,16 @@ export function Feed() {
   if (error) return <p>Не удалось загрузить ленту.</p>;
   if (!items) return <p>Загрузка…</p>;
 
+  const visible = filter ? items.filter(filter) : items;
+
   return (
     <section>
       <h1>Лента</h1>
-      {items.length === 0 ? (
+      {visible.length === 0 ? (
         <p>Пока нет инцидентов.</p>
       ) : (
         <ul>
-          {items.map((item) => (
+          {visible.map((item) => (
             <li key={item.id}>
               <IncidentCard item={item} />
             </li>

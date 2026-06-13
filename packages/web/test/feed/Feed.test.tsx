@@ -104,4 +104,16 @@ describe("Feed", () => {
       "ожидает сети",
     );
   });
+
+  test("filter оставляет только подходящие карточки", async () => {
+    const mine = { ...incident, id: "33333333-3333-4333-8333-333333333333", text: "моё", authorId: "me" };
+    const alien = { ...incident, id: "44444444-4444-4444-8444-444444444444", text: "чужое", authorId: "other" };
+    h.listIncidents.mockResolvedValue([mine, alien]);
+    h.outboxList.mockResolvedValue([]);
+
+    render(<Feed filter={(it) => it.authorId === "me"} />);
+
+    expect(await screen.findByText("моё")).toBeInTheDocument();
+    expect(screen.queryByText("чужое")).not.toBeInTheDocument();
+  });
 });
