@@ -9,6 +9,7 @@ import { MediaGallery } from "../components/MediaGallery";
 import { Timeline } from "../components/Timeline";
 import { LEVEL_LABEL, STATUS_LABEL, VISIBILITY_LABEL } from "../feed/labels";
 import { Link } from "../router/router";
+import styles from "./IncidentDetail.module.css";
 
 const IncidentMap = lazy(() => import("../map/IncidentMap"));
 
@@ -63,18 +64,20 @@ export function IncidentDetail({ id }: { id: string }) {
 
   const { incident, thread } = state;
   return (
-    <section>
-      <h1>Инцидент</h1>
-      <header>
-        <span data-testid="level-badge">{LEVEL_LABEL[incident.level]}</span>
-        <span data-testid="status-badge">{STATUS_LABEL[incident.status]}</span>
-        <span data-testid="visibility-badge">{VISIBILITY_LABEL[incident.visibility]}</span>
+    <section className={styles.wrap}>
+      <h1 className={styles.title}>Инцидент</h1>
+      <header className={styles.head}>
+        <span className={styles.badge} data-testid="level-badge">{LEVEL_LABEL[incident.level]}</span>
+        <span className={styles.badge} data-testid="status-badge">{STATUS_LABEL[incident.status]}</span>
+        <span className={styles.badge} data-testid="visibility-badge">{VISIBILITY_LABEL[incident.visibility]}</span>
       </header>
-      {incident.text && <p>{incident.text}</p>}
+      {incident.text && <p className={styles.text}>{incident.text}</p>}
       {incident.geo && (
-        <Suspense fallback={<p>Загрузка карты…</p>}>
-          <IncidentMap mode="display" value={{ lat: incident.geo.lat, lng: incident.geo.lng }} />
-        </Suspense>
+        <div className={styles.map}>
+          <Suspense fallback={<p>Загрузка карты…</p>}>
+            <IncidentMap mode="display" value={{ lat: incident.geo.lat, lng: incident.geo.lng }} />
+          </Suspense>
+        </div>
       )}
       <CommanderActions
         incident={incident}
@@ -84,7 +87,7 @@ export function IncidentDetail({ id }: { id: string }) {
       <MediaGallery media={thread.media} />
       <Timeline events={thread.events} />
       <Comments incidentId={incident.id} status={incident.status} initial={thread.comments} />
-      <Link to="/">К ленте</Link>
+      <Link className={styles.back} to="/">К ленте</Link>
     </section>
   );
 }

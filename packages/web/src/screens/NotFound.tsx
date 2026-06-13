@@ -1,10 +1,11 @@
 import { Link } from "../router/router";
+import styles from "./auth.module.css";
 
 export function NotFound() {
   return (
-    <section>
+    <section className={styles.wrap}>
       <h1>Не найдено</h1>
-      <Link to="/">К ленте</Link>
+      <Link className={styles.cta} to="/">К ленте</Link>
     </section>
   );
 }

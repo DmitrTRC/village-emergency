@@ -13,7 +13,12 @@ vi.mock("../../src/db/outbox", () => ({ enqueue: h.enqueue }));
 vi.mock("../../src/db/sync", () => ({ drainOutbox: h.drainOutbox }));
 vi.mock("../../src/geo/capture", () => ({ captureGeo: h.captureGeo }));
 vi.mock("../../src/media/compress", () => ({ compress: h.compress }));
-vi.mock("../../src/router/router", () => ({ navigate: h.navigate }));
+vi.mock("../../src/router/router", () => ({
+  navigate: h.navigate,
+  Link: ({ to, children, ...rest }: { to: string; children: import("react").ReactNode }) => (
+    <a href={to} {...rest}>{children}</a>
+  ),
+}));
 
 import { CreateIncident } from "../../src/screens/CreateIncident";
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { exchangeToken } from "../api/endpoints";
 import { useAuth } from "../auth/AuthProvider";
 import { Link, navigate } from "../router/router";
+import styles from "./auth.module.css";
 
 export function AuthCallback() {
   const { setSession } = useAuth();
@@ -30,15 +31,15 @@ export function AuthCallback() {
 
   if (failed) {
     return (
-      <section>
+      <section className={styles.wrap}>
         <h1>Не удалось войти</h1>
-        <Link to="/register">К регистрации</Link>
+        <Link className={styles.cta} to="/register">К регистрации</Link>
       </section>
     );
   }
 
   return (
-    <section>
+    <section className={styles.wrap}>
       <h1>Вход…</h1>
     </section>
   );

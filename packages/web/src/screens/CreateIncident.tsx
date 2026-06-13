@@ -6,7 +6,8 @@ import { enqueue } from "../db/outbox";
 import { drainOutbox } from "../db/sync";
 import type { OutboxMedia } from "../db/idb";
 import { LEVEL_LABEL } from "../feed/labels";
-import { navigate } from "../router/router";
+import { Link, navigate } from "../router/router";
+import styles from "./CreateIncident.module.css";
 
 const IncidentMap = lazy(() => import("../map/IncidentMap"));
 
@@ -109,10 +110,11 @@ export function CreateIncident() {
   }
 
   return (
-    <section>
-      <h1>Новый инцидент</h1>
+    <section className={styles.wrap}>
+      <Link to="/" className={styles.btn} aria-label="Назад">← Назад</Link>
+      <h1 className={styles.title}>Новый инцидент</h1>
 
-      <fieldset>
+      <fieldset className={styles.levels}>
         <legend>Уровень</legend>
         {LEVELS.map((lvl) => (
           <label key={lvl}>
@@ -129,22 +131,23 @@ export function CreateIncident() {
       </fieldset>
 
       <textarea
+        className={styles.text}
         aria-label="Описание"
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="Что случилось?"
       />
 
-      <div>
-        <button type="button" onClick={onPickGeo} disabled={geoBusy}>
+      <div className={styles.actions}>
+        <button type="button" className={styles.btn} onClick={onPickGeo} disabled={geoBusy}>
           {geoBusy ? "Определяю…" : "Геолокация"}
         </button>
         {geo && (
-          <span data-testid="geo-indicator">
+          <span className={styles.geo} data-testid="geo-indicator">
             {geo.lat.toFixed(4)}, {geo.lng.toFixed(4)}
           </span>
         )}
-        <button type="button" onClick={() => setShowMap((v) => !v)}>
+        <button type="button" className={styles.btn} onClick={() => setShowMap((v) => !v)}>
           {showMap ? "Скрыть карту" : "Указать на карте"}
         </button>
       </div>
@@ -170,7 +173,7 @@ export function CreateIncident() {
             onChange={(e) => void onPickPhotos(e.target.files)}
           />
         </label>
-        <ul>
+        <ul className={styles.photos}>
           {photos.map((p) => (
             <li key={p.id} data-testid="photo-preview">
               <img src={p.preview} alt="" width={64} height={64} />
@@ -182,9 +185,9 @@ export function CreateIncident() {
         </ul>
       </div>
 
-      {error && <p role="alert">{error}</p>}
+      {error && <p className={styles.error} role="alert">{error}</p>}
 
-      <button type="button" onClick={() => void onSubmit()} disabled={submitting}>
+      <button type="button" className={styles.submit} onClick={() => void onSubmit()} disabled={submitting}>
         Отправить
       </button>
     </section>
