@@ -9,7 +9,7 @@ const HOLD_MS = 1500;
 type Phase = "idle" | "holding" | "armed" | "sending" | "sent";
 
 const LABEL: Record<Phase, string> = {
-  idle: "СООБЩИТЬ",
+  idle: "ТРЕВОГА",
   holding: "Держите…",
   armed: "Отпустите для отправки",
   sending: "Отправляем…",

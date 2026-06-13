@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { CloseReason, Incident, Role } from "@village/shared";
 import { acceptIncident, closeIncident } from "../api/endpoints";
 import { CLOSE_REASON_LABEL } from "../feed/labels";
+import styles from "./CommanderActions.module.css";
 
 const REASONS: CloseReason[] = ["resolved", "false", "duplicate"];
 
@@ -38,16 +39,21 @@ export function CommanderActions({
   };
 
   return (
-    <section data-testid="commander-actions">
+    <section className={styles.wrap} data-testid="commander-actions">
       {canAccept && (
-        <button type="button" disabled={busy} onClick={() => void run(() => acceptIncident(incident.id))}>
+        <button
+          type="button"
+          className="btn btn-accent btn-block"
+          disabled={busy}
+          onClick={() => void run(() => acceptIncident(incident.id))}
+        >
           Принять
         </button>
       )}
       {canClose && (
         <>
-          <label>
-            Причина
+          <label className={styles.field}>
+            <span className={styles.label}>Причина</span>
             <select value={reason} onChange={(e) => setReason(e.target.value as CloseReason | "")}>
               <option value="">— выберите —</option>
               {REASONS.map((r) => (
@@ -57,19 +63,27 @@ export function CommanderActions({
               ))}
             </select>
           </label>
-          <button
-            type="button"
-            disabled={busy || reason === ""}
-            onClick={() => reason !== "" && void run(() => closeIncident(incident.id, reason))}
-          >
-            Закрыть
-          </button>
-          <button type="button" disabled={busy} onClick={() => void run(() => closeIncident(incident.id, "false"))}>
-            Отклонить
-          </button>
+          <div className="actions">
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={busy || reason === ""}
+              onClick={() => reason !== "" && void run(() => closeIncident(incident.id, reason))}
+            >
+              Закрыть
+            </button>
+            <button
+              type="button"
+              className="btn btn-danger"
+              disabled={busy}
+              onClick={() => void run(() => closeIncident(incident.id, "false"))}
+            >
+              Отклонить
+            </button>
+          </div>
         </>
       )}
-      {failed && <p role="alert">Не удалось выполнить действие.</p>}
+      {failed && <p className={styles.error} role="alert">Не удалось выполнить действие.</p>}
     </section>
   );
 }

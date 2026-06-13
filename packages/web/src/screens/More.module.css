@@ -5,8 +5,4 @@
   padding: 14px; background: var(--surface); border-radius: var(--radius);
 }
 .key { color: var(--muted); }
-.signout {
-  min-height: var(--tap); margin-top: 8px;
-  background: var(--surface); color: var(--emergency);
-  border: 1px solid var(--border); border-radius: var(--radius); font-weight: 700;
-}
+.signout { margin-top: 8px; font-weight: 700; }

@@ -7,7 +7,7 @@ const schema = z.object({
   VITE_MAP_TILE_URL: z
     .string()
     .default("https://tile.openstreetmap.org/{z}/{x}/{y}.png"),
-  VITE_VILLAGE_NAME: z.string().default("Наше село"),
+  VITE_VILLAGE_NAME: z.string().default("КП Лукоморье (188685)"),
 });
 
 const env = schema.parse(import.meta.env);

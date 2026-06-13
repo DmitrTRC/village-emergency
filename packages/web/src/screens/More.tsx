@@ -25,7 +25,7 @@ export function More() {
         <span>{online ? "онлайн" : "офлайн"}</span>
       </div>
       <InstallPrompt />
-      <button type="button" className={styles.signout} onClick={() => void signOut()}>
+      <button type="button" className={`btn btn-danger btn-block ${styles.signout}`} onClick={() => void signOut()}>
         Выйти
       </button>
     </section>

@@ -111,7 +111,7 @@ export function CreateIncident() {
 
   return (
     <section className={styles.wrap}>
-      <Link to="/" className={styles.btn} aria-label="Назад">← Назад</Link>
+      <Link to="/" className={styles.back} aria-label="Назад">← Назад</Link>
       <h1 className={styles.title}>Новый инцидент</h1>
 
       <fieldset className={styles.levels}>
@@ -138,8 +138,8 @@ export function CreateIncident() {
         placeholder="Что случилось?"
       />
 
-      <div className={styles.actions}>
-        <button type="button" className={styles.btn} onClick={onPickGeo} disabled={geoBusy}>
+      <div className="actions">
+        <button type="button" className="btn" onClick={onPickGeo} disabled={geoBusy}>
           {geoBusy ? "Определяю…" : "Геолокация"}
         </button>
         {geo && (
@@ -147,7 +147,7 @@ export function CreateIncident() {
             {geo.lat.toFixed(4)}, {geo.lng.toFixed(4)}
           </span>
         )}
-        <button type="button" className={styles.btn} onClick={() => setShowMap((v) => !v)}>
+        <button type="button" className="btn" onClick={() => setShowMap((v) => !v)}>
           {showMap ? "Скрыть карту" : "Указать на карте"}
         </button>
       </div>
@@ -162,9 +162,9 @@ export function CreateIncident() {
         </Suspense>
       )}
 
-      <div>
-        <label>
-          Фото (до {MAX_PHOTOS})
+      <div className={styles.uploader}>
+        <label className={`btn ${styles.upload}`}>
+          Добавить фото (до {MAX_PHOTOS})
           <input
             type="file"
             accept="image/*"
@@ -173,22 +173,34 @@ export function CreateIncident() {
             onChange={(e) => void onPickPhotos(e.target.files)}
           />
         </label>
-        <ul className={styles.photos}>
-          {photos.map((p) => (
-            <li key={p.id} data-testid="photo-preview">
-              <img src={p.preview} alt="" width={64} height={64} />
-              <button type="button" onClick={() => removePhoto(p.id)}>
-                Удалить
-              </button>
-            </li>
-          ))}
-        </ul>
+        {photos.length > 0 && (
+          <ul className={styles.photos}>
+            {photos.map((p) => (
+              <li key={p.id} className={styles.photo} data-testid="photo-preview">
+                <img src={p.preview} alt="" />
+                <button
+                  type="button"
+                  className={styles.removePhoto}
+                  aria-label="Удалить фото"
+                  onClick={() => removePhoto(p.id)}
+                >
+                  ×
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {error && <p className={styles.error} role="alert">{error}</p>}
 
-      <button type="button" className={styles.submit} onClick={() => void onSubmit()} disabled={submitting}>
-        Отправить
+      <button
+        type="button"
+        className="btn btn-primary btn-block"
+        onClick={() => void onSubmit()}
+        disabled={submitting}
+      >
+        {submitting ? "Отправляю…" : "Отправить"}
       </button>
     </section>
   );

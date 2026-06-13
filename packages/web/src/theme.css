@@ -38,3 +38,67 @@ button { font: inherit; cursor: pointer; color: inherit; }
 a { color: var(--attention); text-decoration: none; }
 h1, h2, h3 { font-family: var(--font-display); }
 :focus-visible { outline: 2px solid var(--attention); outline-offset: 2px; }
+
+/* ---- form controls ---- */
+textarea,
+select,
+input[type="text"],
+input[type="search"] {
+  width: 100%;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+select { min-height: var(--tap); }
+textarea { min-height: 88px; resize: vertical; line-height: 1.4; }
+::placeholder { color: var(--muted); }
+
+/* ---- buttons ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--tap);
+  padding: 0 18px;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: transform 0.08s ease, opacity 0.12s ease;
+}
+.btn:active { transform: scale(0.98); }
+.btn:disabled { opacity: 0.45; cursor: default; transform: none; }
+.btn-primary { background: var(--emergency); border-color: transparent; color: #fff; font-weight: 800; border-radius: var(--radius-lg); }
+.btn-accent  { background: var(--attention); border-color: transparent; color: #fff; font-weight: 700; }
+.btn-danger  { background: var(--surface); color: var(--emergency); }
+.btn-outline {
+  background: rgba(61, 139, 255, 0.07);
+  border: 2px solid var(--attention);
+  color: var(--attention);
+  font-weight: 700;
+  box-shadow: 0 0 16px rgba(61, 139, 255, 0.18);
+}
+.btn-outline:active { background: rgba(61, 139, 255, 0.16); }
+.btn-block   { display: flex; width: 100%; }
+
+/* ---- layout helpers ---- */
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+/* ---- badge ---- */
+.badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text);
+}
+.badge[data-level="emergency"] { background: var(--emergency); color: #fff; }
+.badge[data-level="offence"]   { background: var(--offence); color: #1a1206; }
+.badge[data-level="attention"] { background: var(--attention); color: #fff; }

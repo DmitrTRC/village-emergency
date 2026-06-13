@@ -41,16 +41,16 @@ export function InstallPrompt() {
   };
 
   return (
-    <div data-testid="install-prompt">
+    <div className="actions" data-testid="install-prompt">
       {deferred && (
-        <button type="button" onClick={() => void install()}>
+        <button type="button" className="btn" onClick={() => void install()}>
           Добавить на экран
         </button>
       )}
       {pushEnabled ? (
         <span>Уведомления включены</span>
       ) : (
-        <button type="button" onClick={() => void enablePush()} disabled={pushBusy}>
+        <button type="button" className="btn" onClick={() => void enablePush()} disabled={pushBusy}>
           Включить уведомления
         </button>
       )}

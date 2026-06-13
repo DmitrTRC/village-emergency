@@ -1,18 +1,33 @@
 .wrap { padding: 12px 16px 24px; display: flex; flex-direction: column; gap: 14px; }
+.back { align-self: flex-start; min-height: 36px; display: inline-flex; align-items: center; color: var(--muted); }
 .title { margin: 0; font-size: 18px; }
+
 .levels { display: flex; gap: 8px; border: none; padding: 0; margin: 0; }
 .levels legend { padding: 0; margin-bottom: 6px; font-size: 12px; color: var(--muted); }
 .levels label {
   flex: 1; min-height: var(--tap); display: flex; align-items: center; justify-content: center;
   gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  font-size: 14px;
 }
-.text {
-  width: 100%; min-height: 96px; padding: 12px; font: inherit;
-  background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius);
+.levels label:has(input:checked) { border-color: var(--text); background: var(--surface-2); font-weight: 700; }
+.levels label:has(input:focus-visible) { outline: 2px solid var(--attention); outline-offset: 2px; }
+.levels input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+.text { width: 100%; }
+
+.uploader { display: flex; flex-direction: column; gap: 10px; }
+.upload { align-self: flex-start; }
+.upload input { display: none; }
+
+.photos { list-style: none; margin: 0; padding: 0; display: flex; gap: 8px; flex-wrap: wrap; }
+.photo { position: relative; width: 72px; height: 72px; }
+.photo img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border); }
+.removePhoto {
+  position: absolute; top: -6px; right: -6px; width: 22px; height: 22px; min-height: 0; padding: 0;
+  display: flex; align-items: center; justify-content: center; line-height: 1;
+  background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 999px;
+  font-size: 16px;
 }
-.actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.btn { min-height: var(--tap); padding: 0 18px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); }
-.submit { min-height: var(--tap); background: var(--emergency); color: #fff; border: none; border-radius: var(--radius-lg); font-weight: 800; }
-.error { color: var(--emergency); }
-.photos { list-style: none; margin: 8px 0 0; padding: 0; display: flex; gap: 8px; flex-wrap: wrap; }
+
+.error { color: var(--emergency); margin: 0; }
 .geo { font-size: 13px; color: var(--muted); }

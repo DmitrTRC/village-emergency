@@ -44,20 +44,20 @@ export function IncidentDetail({ id }: { id: string }) {
     };
   }, [id]);
 
-  if (state.kind === "loading") return <p>Загрузка…</p>;
+  if (state.kind === "loading") return <p className={styles.loading}>Загрузка…</p>;
   if (state.kind === "forbidden") {
     return (
-      <section>
-        <h1>Нет доступа</h1>
-        <Link to="/">К ленте</Link>
+      <section className={styles.wrap}>
+        <h1 className={styles.title}>Нет доступа</h1>
+        <Link className="btn btn-accent btn-block" to="/">К ленте</Link>
       </section>
     );
   }
   if (state.kind === "error") {
     return (
-      <section>
-        <h1>Не удалось загрузить инцидент</h1>
-        <Link to="/">К ленте</Link>
+      <section className={styles.wrap}>
+        <h1 className={styles.title}>Не удалось загрузить инцидент</h1>
+        <Link className="btn btn-accent btn-block" to="/">К ленте</Link>
       </section>
     );
   }
@@ -67,9 +67,9 @@ export function IncidentDetail({ id }: { id: string }) {
     <section className={styles.wrap}>
       <h1 className={styles.title}>Инцидент</h1>
       <header className={styles.head}>
-        <span className={styles.badge} data-testid="level-badge">{LEVEL_LABEL[incident.level]}</span>
-        <span className={styles.badge} data-testid="status-badge">{STATUS_LABEL[incident.status]}</span>
-        <span className={styles.badge} data-testid="visibility-badge">{VISIBILITY_LABEL[incident.visibility]}</span>
+        <span className="badge" data-level={incident.level} data-testid="level-badge">{LEVEL_LABEL[incident.level]}</span>
+        <span className="badge" data-testid="status-badge">{STATUS_LABEL[incident.status]}</span>
+        <span className="badge" data-testid="visibility-badge">{VISIBILITY_LABEL[incident.visibility]}</span>
       </header>
       {incident.text && <p className={styles.text}>{incident.text}</p>}
       {incident.geo && (
@@ -87,7 +87,7 @@ export function IncidentDetail({ id }: { id: string }) {
       <MediaGallery media={thread.media} />
       <Timeline events={thread.events} />
       <Comments incidentId={incident.id} status={incident.status} initial={thread.comments} />
-      <Link className={styles.back} to="/">К ленте</Link>
+      <Link className={`btn btn-block ${styles.back}`} to="/">К ленте</Link>
     </section>
   );
 }
