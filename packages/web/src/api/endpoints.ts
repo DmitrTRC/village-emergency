@@ -6,7 +6,7 @@ import {
   UploadStatus,
   Role,
 } from "@village/shared";
-import type { NewIncidentInput, CloseReason } from "@village/shared";
+import type { NewIncidentInput, CloseReason, PushSubscriptionDTO } from "@village/shared";
 import { apiFetch } from "./client";
 
 const seg = (v: string) => encodeURIComponent(v);
@@ -96,6 +96,13 @@ export const markMediaUploaded = (incidentId: string, mediaId: string) =>
     method: "PATCH",
     body: { uploaded: true },
     schema: MediaPatchResult,
+  });
+
+export const savePushSubscription = (sub: PushSubscriptionDTO) =>
+  apiFetch("/push/subscription", {
+    method: "PUT",
+    body: sub,
+    schema: z.object({ ok: z.literal(true) }),
   });
 
 // --- registrations (commander-only on server) ---
