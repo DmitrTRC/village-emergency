@@ -1,11 +1,20 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { act, cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import type { Incident } from "@village/shared";
 import type { OutboxItem } from "../../src/db/idb";
 
-const h = vi.hoisted(() => ({ listIncidents: vi.fn(), outboxList: vi.fn() }));
+const h = vi.hoisted(() => ({
+  listIncidents: vi.fn(),
+  outboxList: vi.fn(),
+  sseHandler: null as null | (() => void),
+}));
 vi.mock("../../src/api/endpoints", () => ({ listIncidents: h.listIncidents }));
 vi.mock("../../src/db/outbox", () => ({ list: h.outboxList }));
+vi.mock("../../src/sse/useEventStream", () => ({
+  useEventStream: (cb: () => void) => {
+    h.sseHandler = cb;
+  },
+}));
 
 import { Feed } from "../../src/screens/Feed";
 
@@ -61,6 +70,22 @@ describe("Feed", () => {
       "href",
       "/i/11111111-1111-4111-8111-111111111111",
     );
+  });
+
+  test("SSE-событие → перезагрузка ленты", async () => {
+    h.listIncidents.mockResolvedValue([]);
+    h.outboxList.mockResolvedValue([]);
+    render(<Feed />);
+    await screen.findByText("Пока нет инцидентов.");
+    expect(h.listIncidents).toHaveBeenCalledTimes(1);
+
+    h.listIncidents.mockResolvedValue([incident]);
+    await act(async () => {
+      h.sseHandler?.();
+    });
+
+    await waitFor(() => expect(h.listIncidents).toHaveBeenCalledTimes(2));
+    expect(await screen.findByText("разбили фонарь")).toBeInTheDocument();
   });
 
   test("пустая лента", async () => {

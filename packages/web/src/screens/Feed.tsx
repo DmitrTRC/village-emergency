@@ -1,32 +1,34 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { listIncidents } from "../api/endpoints";
 import { IncidentCard } from "../components/IncidentCard";
 import { list as outboxList } from "../db/outbox";
 import { mergeFeed, type FeedItem } from "../feed/merge";
+import { useEventStream } from "../sse/useEventStream";
 
 export function Feed() {
   const [items, setItems] = useState<FeedItem[] | null>(null);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-    void (async () => {
+  const load = useCallback(async () => {
+    try {
+      const [incidents, outbox] = await Promise.all([listIncidents(), outboxList()]);
+      setItems(mergeFeed(incidents, outbox));
+      setError(false);
+    } catch {
       try {
-        const [incidents, outbox] = await Promise.all([listIncidents(), outboxList()]);
-        if (!cancelled) setItems(mergeFeed(incidents, outbox));
+        const outbox = await outboxList();
+        setItems(mergeFeed([], outbox));
       } catch {
-        try {
-          const outbox = await outboxList();
-          if (!cancelled) setItems(mergeFeed([], outbox));
-        } catch {
-          if (!cancelled) setError(true);
-        }
+        setError(true);
       }
-    })();
-    return () => {
-      cancelled = true;
-    };
+    }
   }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  useEventStream(useCallback(() => void load(), [load]));
 
   if (error) return <p>Не удалось загрузить ленту.</p>;
   if (!items) return <p>Загрузка…</p>;
