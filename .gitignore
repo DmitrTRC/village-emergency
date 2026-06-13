@@ -36,5 +36,11 @@ venv/
 *.db
 *.dump
 
+# ── e2e / playwright artifacts ─────────────────────────────────
+test-results/
+playwright-report/
+.playwright/
+*/.last-run.json
+
 # ── project-specific ───────────────────────────────────────────
 data/houses.private.csv

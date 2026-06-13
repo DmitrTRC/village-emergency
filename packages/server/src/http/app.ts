@@ -5,6 +5,7 @@ import { incidentsRoutes } from "./routes/incidents.js";
 import { registrationsRoutes } from "./routes/registrations.js";
 import { mediaRoutes } from "./routes/media.js";
 import { eventsRoutes } from "./routes/events.js";
+import { pushRoutes } from "./routes/push.js";
 import { authRoutes } from "./routes/auth.js";
 
 export function buildApp(ctx: AppContext): Hono<{ Variables: AuthedVars }> {
@@ -21,6 +22,7 @@ export function buildApp(ctx: AppContext): Hono<{ Variables: AuthedVars }> {
   protectedApp.route("/registrations", registrationsRoutes(ctx));
   protectedApp.route("/incidents", mediaRoutes(ctx));
   protectedApp.route("/events", eventsRoutes(ctx));
+  protectedApp.route("/push", pushRoutes(ctx));
   app.route("/", protectedApp);
 
   return app;
