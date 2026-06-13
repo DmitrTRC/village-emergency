@@ -1,0 +1,40 @@
+name: Баг
+description: Что-то работает не так
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Что происходит
+      description: Что пошло не так и что ожидалось.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Шаги воспроизведения
+      placeholder: |
+        1. ...
+        2. ...
+        3. вижу ...
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Область
+      options: [web (PWA), server (API), shared, деплой, не знаю]
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Окружение
+      placeholder: "браузер/устройство, online/offline, версия"
+  - type: checkboxes
+    id: offline
+    attributes:
+      label: Контекст связи
+      options:
+        - label: Воспроизводится в offline-режиме
+        - label: Связана с очередью/синхронизацией

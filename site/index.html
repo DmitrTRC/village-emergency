@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>village-emrg — тревожная кнопка дачного посёлка</title>
+<meta name="description" content="Offline-first PWA на три уровня тревоги для соседской взаимопомощи и ДНД. Работает без сети, доставляет позже."/>
+<meta property="og:title" content="village-emrg"/>
+<meta property="og:description" content="Offline-first тревожная кнопка дачного посёлка"/>
+<meta property="og:type" content="website"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%23ff3b3b'/%3E%3C/svg%3E"/>
+<style>
+  :root{
+    --bg:#0b1220; --surface:#141d2e; --surface-2:#1b2740; --border:#1d2840;
+    --text:#e8edf6; --muted:#5f7088; --sub:#9fb0c8;
+    --emergency:#ff3b3b; --offence:#ffb020; --attention:#3d8bff; --online:#3ddc84;
+    --radius:14px; --maxw:980px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);
+    line-height:1.5;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(1200px 600px at 50% -10%,rgba(255,59,59,.10),transparent 60%),
+      radial-gradient(900px 500px at 90% 10%,rgba(61,139,255,.08),transparent 55%);}
+  a{color:var(--attention);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+  section{padding:64px 0}
+  h2{font-size:clamp(22px,3.4vw,30px);margin:0 0 24px}
+  .eyebrow{color:var(--muted);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:12px;margin:0 0 10px}
+
+  /* hero */
+  header{padding:84px 0 40px;text-align:center}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid var(--border);
+    border-radius:999px;background:var(--surface);color:var(--sub);font-size:13px;font-weight:600}
+  .dot{width:8px;height:8px;border-radius:999px;background:var(--online);box-shadow:0 0 10px var(--online);
+    animation:blink 1.8s ease-in-out infinite}
+  @keyframes blink{0%,100%{opacity:.4}50%{opacity:1}}
+  h1{font-size:clamp(34px,7vw,64px);margin:22px 0 14px;letter-spacing:-.02em;font-weight:800}
+  .tag{font-size:clamp(16px,2.4vw,20px);color:var(--sub);max-width:640px;margin:0 auto 8px}
+  .note{color:var(--muted);font-size:14px;margin:0 auto 34px;max-width:560px}
+
+  .panic{position:relative;display:inline-grid;place-items:center;width:168px;height:168px;border-radius:999px;
+    border:none;cursor:default;color:#fff;font-weight:800;font-size:20px;letter-spacing:.08em;
+    background:radial-gradient(circle at 50% 38%,#ff6a6a,var(--emergency) 70%);
+    box-shadow:0 14px 40px rgba(255,59,59,.40),inset 0 -6px 18px rgba(0,0,0,.25)}
+  .panic::before,.panic::after{content:"";position:absolute;inset:0;border-radius:999px;
+    border:2px solid var(--emergency);animation:ring 2.8s ease-out infinite}
+  .panic::after{animation-delay:1.4s}
+  @keyframes ring{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.7);opacity:0}}
+
+  .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:38px}
+  .btn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 22px;border-radius:12px;
+    font-weight:700;border:1px solid var(--border);background:var(--surface-2);color:var(--text)}
+  .btn.primary{background:var(--attention);border-color:transparent;color:#fff}
+  .btn:hover{text-decoration:none;transform:translateY(-1px)}
+  .badges{margin-top:30px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .badges img{height:22px}
+
+  /* generic card grid */
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:760px){.g3,.g2{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+  .card h3{margin:0 0 8px;font-size:17px}
+  .card p{margin:0;color:var(--sub);font-size:14.5px}
+  .lvl{display:inline-block;font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;margin-bottom:12px}
+  .lvl.e{background:var(--emergency);color:#fff}
+  .lvl.o{background:var(--offence);color:#1a1206}
+  .lvl.a{background:var(--attention);color:#fff}
+
+  .diagram{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:18px;text-align:center}
+  .diagram img{max-width:100%;height:auto}
+
+  /* stack */
+  .stack{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{border:1px solid var(--border);background:var(--surface-2);border-radius:10px;padding:8px 14px;
+    font-size:14px;color:var(--sub);font-weight:600}
+
+  /* roadmap */
+  .road{position:relative;padding-left:26px}
+  .road::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--border)}
+  .step{position:relative;margin-bottom:18px}
+  .step::before{content:"";position:absolute;left:-26px;top:5px;width:14px;height:14px;border-radius:999px;
+    background:var(--surface);border:2px solid var(--attention)}
+  .step.done::before{background:var(--online);border-color:var(--online)}
+  .step h3{margin:0 0 4px;font-size:16px}
+  .step p{margin:0;color:var(--sub);font-size:14px}
+  .step .when{color:var(--muted);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+
+  footer{border-top:1px solid var(--border);padding:34px 0;color:var(--muted);text-align:center;font-size:14px}
+  footer a{margin:0 8px}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <span class="pill"><span class="dot"></span>offline-first · PWA · один VPS</span>
+  <h1>village-emrg</h1>
+  <p class="tag">«Тревожная кнопка» дачного посёлка на три уровня — для соседской взаимопомощи и народной дружины.</p>
+  <p class="note">Работает без сети: ставит инцидент в локальную очередь и доставляет, как только появится связь. <strong>Не заменяет 112</strong> — фиксирует факт и поднимает соседей.</p>
+
+  <div class="panic">ТРЕВОГА</div>
+
+  <div class="cta">
+    <a class="btn primary" href="https://github.com/DmitrTRC/village-emergency">Репозиторий →</a>
+    <a class="btn" href="#roadmap">Roadmap</a>
+    <a class="btn" href="#arch">Архитектура</a>
+  </div>
+
+  <div class="badges">
+    <img src="https://img.shields.io/badge/Node-22-3c873a?logo=nodedotjs&logoColor=white&labelColor=2b3650" alt="Node 22"/>
+    <img src="https://img.shields.io/badge/TypeScript-5.6-3178c6?logo=typescript&logoColor=white&labelColor=2b3650" alt="TypeScript"/>
+    <img src="https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=black&labelColor=2b3650" alt="React 18"/>
+    <img src="https://img.shields.io/badge/Hono-4-e36002?logo=hono&logoColor=white&labelColor=2b3650" alt="Hono"/>
+    <img src="https://img.shields.io/badge/PostgreSQL-16-4169e1?logo=postgresql&logoColor=white&labelColor=2b3650" alt="PostgreSQL 16"/>
+  </div>
+</header>
+
+<section class="wrap" id="levels">
+  <p class="eyebrow">Три уровня тревоги</p>
+  <h2>Одно нажатие — нужный приоритет</h2>
+  <div class="grid g3">
+    <div class="card">
+      <span class="lvl e">EMERGENCY</span>
+      <h3>Критическая ситуация</h3>
+      <p>Безотлагательно. Публичен сразу при доставке, push всем жителям и командиру. Житель параллельно сам звонит в 112.</p>
+    </div>
+    <div class="card">
+      <span class="lvl o">ПРАВОНАРУШЕНИЕ</span>
+      <h3>Уже произошло</h3>
+      <p>Разбор на уровне ДНД. Приватен (автор + командир), пока командир не примет в работу.</p>
+    </div>
+    <div class="card">
+      <span class="lvl a">ВНИМАНИЕ</span>
+      <h3>Подозрительное</h3>
+      <p>Незнакомые машины и люди. Приватен до «принято», потом виден всем жителям.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="features">
+  <p class="eyebrow">Почему так</p>
+  <h2>Инженерные решения под реальный посёлок</h2>
+  <div class="grid g2">
+    <div class="card"><h3>📶 Offline-first</h3><p>UUIDv7 на клиенте, IndexedDB-очередь, Background Sync. POST идемпотентен — повтор не плодит дублей.</p></div>
+    <div class="card"><h3>⚡ Live без Redis</h3><p>SSE поверх Postgres <code>LISTEN/NOTIFY</code>. Один Node-процесс, без отдельного WebSocket-сервера.</p></div>
+    <div class="card"><h3>🤖 Telegram-логин</h3><p>Регистрация и вход через бота, модерация командиром. Без паролей — фактор владения аккаунтом.</p></div>
+    <div class="card"><h3>🔒 PII-минимум</h3><p>Обязателен только адрес дома. Список домов и фамилий — вне репозитория. ФЗ-152.</p></div>
+    <div class="card"><h3>📷 Прямо в S3</h3><p>Фото жмётся в WebP на клиенте и грузится по pre-signed PUT, минуя бэкенд. EXIF стрипается.</p></div>
+    <div class="card"><h3>🧾 Аудит-журнал</h3><p>Append-only <code>incident_events</code> — источник timeline в UI и будущих отчётов.</p></div>
+  </div>
+</section>
+
+<section class="wrap" id="arch">
+  <p class="eyebrow">Архитектура</p>
+  <h2>PWA → один Hono-процесс → управляемые сервисы</h2>
+  <div class="diagram">
+    <img src="architecture.svg" alt="Схема архитектуры village-emrg"/>
+  </div>
+</section>
+
+<section class="wrap" id="stack">
+  <p class="eyebrow">Стек</p>
+  <h2>TypeScript от формы до базы</h2>
+  <div class="stack">
+    <span class="chip">React 18</span><span class="chip">Vite 5</span><span class="chip">Workbox SW</span>
+    <span class="chip">MapLibre GL</span><span class="chip">Hono</span><span class="chip">grammy</span>
+    <span class="chip">web-push</span><span class="chip">Drizzle ORM</span><span class="chip">Zod</span>
+    <span class="chip">PostgreSQL 16</span><span class="chip">Selectel S3</span><span class="chip">Docker · Caddy</span>
+    <span class="chip">Vitest</span><span class="chip">testcontainers</span><span class="chip">Playwright</span>
+  </div>
+</section>
+
+<section class="wrap" id="roadmap">
+  <p class="eyebrow">Roadmap</p>
+  <h2>От MVP к посёлковой сети</h2>
+  <div class="road">
+    <div class="step done"><span class="when">MVP · готово</span><h3>Три уровня тревоги, offline-доставка, push, модерация</h3><p>Текст + фото + гео, жизненный цикл draft→delivered→accepted→closed, комментарии.</p></div>
+    <div class="step"><span class="when">Запуск</span><h3>Telegram-бот как полный интерфейс жителя</h3><p>Уведомления + создание инцидента прямо в боте (текст/фото/гео/голос). Покрывает не-PWA половину посёлка — устройства ~50/50, много кнопочных.</p></div>
+    <div class="step"><span class="when">Запуск</span><h3>Реальный iOS-push и онбординг</h3><p>A2HS + web-push на живых iPhone по чеклисту, регистрация «бабушка справится», операционный минимум (health-check, бэкапы, логи).</p></div>
+    <div class="step"><span class="when">Качество жизни</span><h3>Замы командира · голос/видео · экспорт</h3><p>Снять единую точку отказа, push-эскалация по таймауту, медиа в комментариях, экспорт PDF/CSV из журнала событий.</p></div>
+    <div class="step"><span class="when">Горизонт</span><h3>Mesh между жителями</h3><p>Peer-sync (Yjs) при полном отсутствии интернета. UUIDv7 + append-only events совместимы. Плюс i18n и цифровые подписи (TSP).</p></div>
+  </div>
+  <p style="color:var(--muted);font-size:14px;margin-top:8px">Полный roadmap — в <a href="https://github.com/DmitrTRC/village-emergency/blob/main/ROADMAP.md">ROADMAP.md</a>.</p>
+</section>
+
+<footer class="wrap">
+  <div>
+    <a href="https://github.com/DmitrTRC/village-emergency">GitHub</a> ·
+    <a href="https://github.com/DmitrTRC/village-emergency/blob/main/ROADMAP.md">Roadmap</a> ·
+    <a href="https://github.com/DmitrTRC/village-emergency/blob/main/SECURITY.md">Безопасность</a>
+  </div>
+  <p>Проприетарно · сделано для посёлка · brainstorming с Claude</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+name: Фича / идея
+description: Предложить улучшение
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Проблема
+      description: Какую боль решаем? Для кого — житель или командир?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Предложение
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Это MVP или roadmap?
+      options: [MVP, roadmap (после MVP), не уверен]
+    validations:
+      required: true

@@ -45,3 +45,6 @@ playwright-report/
 
 # ── project-specific ───────────────────────────────────────────
 data/houses.private.csv
+
+# схему в site/ кладёт Pages-workflow (cp из assets/) — не коммитим дубль
+site/architecture.svg
