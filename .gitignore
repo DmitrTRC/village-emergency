@@ -18,6 +18,7 @@ secrets/
 .claude/
 .opencode/
 .aider*
+.superpowers/
 
 # ── build / cache (общие) ──────────────────────────────────────
 node_modules/
