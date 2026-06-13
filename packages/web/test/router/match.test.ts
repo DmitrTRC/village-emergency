@@ -26,4 +26,16 @@ describe("matchRoute", () => {
     expect(isPublicRoute({ name: "feed" })).toBe(false);
     expect(isPublicRoute({ name: "detail", id: "x" })).toBe(false);
   });
+
+  test("новые статические вкладки", () => {
+    expect(matchRoute("/map")).toEqual({ name: "map" });
+    expect(matchRoute("/mine")).toEqual({ name: "mine" });
+    expect(matchRoute("/more")).toEqual({ name: "more" });
+  });
+
+  test("новые вкладки приватные", () => {
+    expect(isPublicRoute({ name: "map" })).toBe(false);
+    expect(isPublicRoute({ name: "mine" })).toBe(false);
+    expect(isPublicRoute({ name: "more" })).toBe(false);
+  });
 });

@@ -2,6 +2,9 @@ export type Route =
   | { name: "feed" }
   | { name: "detail"; id: string }
   | { name: "create" }
+  | { name: "map" }
+  | { name: "mine" }
+  | { name: "more" }
   | { name: "register" }
   | { name: "callback" }
   | { name: "notFound" };
@@ -14,6 +17,12 @@ export function matchRoute(pathname: string): Route {
       return { name: "feed" };
     case "/new":
       return { name: "create" };
+    case "/map":
+      return { name: "map" };
+    case "/mine":
+      return { name: "mine" };
+    case "/more":
+      return { name: "more" };
     case "/register":
       return { name: "register" };
     case "/auth/callback":
