@@ -7,6 +7,12 @@ export const LEVEL_LABEL: Record<IncidentLevel, string> = {
   attention: "Внимание",
 };
 
+export const LEVEL_COLOR: Record<IncidentLevel, string> = {
+  emergency: "#ff3b3b",
+  offence: "#ffb020",
+  attention: "#3d8bff",
+};
+
 export const STATUS_LABEL: Record<FeedItem["status"], string> = {
   draft: "Черновик",
   delivered: "Доставлено",

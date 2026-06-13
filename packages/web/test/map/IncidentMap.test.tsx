@@ -74,4 +74,18 @@ describe("IncidentMap", () => {
     unmount();
     expect(h.map.remove).toHaveBeenCalledTimes(1);
   });
+
+  test("display c markers: создаёт маркер на каждый инцидент", () => {
+    render(
+      <IncidentMap
+        mode="display"
+        markers={[
+          { id: "a", lat: 1, lng: 2, level: "emergency" },
+          { id: "b", lat: 3, lng: 4, level: "attention" },
+        ]}
+      />,
+    );
+    // 1 центральный (value не задан → DEFAULT_CENTER) + 2 маркера инцидентов
+    expect(h.MarkerCtor).toHaveBeenCalledTimes(3);
+  });
 });
