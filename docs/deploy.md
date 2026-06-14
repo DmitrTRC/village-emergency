@@ -77,9 +77,13 @@ npx web-push generate-vapid-keys
 ```
 git clone <repo> village-emrg && cd village-emrg
 cp .env.example .env
-# заполнить .env реальными значениями (см. разделы выше)
-docker compose up -d --build
+# заполнить .env реальными значениями (см. разделы выше),
+# RELEASE_TAG — нужная версия образов из ghcr (например 0.1.0)
+docker compose pull
+docker compose up -d
 ```
+
+Образы тянутся из ghcr (public, без `docker login`). Сборки на VM нет.
 
 Проверка:
 ```
@@ -94,15 +98,28 @@ curl -fsS https://village.example.ru/api/health   # {"ok":true}
   `commander` выдаётся автоматически. Дальше заявки остальных жителей
   командир одобряет из приложения.
 
-## 9. Обновление
+## 9. Обновление и откат
+
+Обновление — сменить `RELEASE_TAG` в `.env` на новую версию и подтянуть образы:
 
 ```
-git pull
-docker compose up -d --build
+# .env: RELEASE_TAG=0.2.0
+docker compose pull
+docker compose up -d
 ```
-- Меняли `VITE_*`? Пересборка caddy-образа обязательна (значения вшиты в
-  бандл) — `up --build` это делает.
-- Только серверные изменения — пересоберётся `app`.
+
+`git pull` нужен только когда поменялись `docker-compose.yml` или `Caddyfile`,
+не ради самих образов — они приходят из ghcr.
+
+Откат — поставить предыдущую версию и повторить pull:
+
+```
+# .env: RELEASE_TAG=0.1.0
+docker compose pull
+docker compose up -d
+```
+
+Детерминированно, без пересборки: каждая версия — это неизменяемый образ в ghcr.
 
 ## 10. Диагностика
 
@@ -111,6 +128,28 @@ docker compose up -d --build
 - Фото не грузится из браузера → проверить CORS бакета (раздел 3).
 - Push не подписывается → `VAPID_PUBLIC` ≠ `VITE_VAPID_PUBLIC_KEY`.
 - Логин из Telegram открывает не тот адрес → `PUBLIC_BASE_URL` ≠ `https://DOMAIN`.
+
+## 11. Сборка образов (CI)
+
+Прод-образы собираются в GitHub Actions (`.github/workflows/release.yml`), не на VM:
+
+- **Релиз по тегу**: `git tag -a vX.Y.Z -m ... && git push origin vX.Y.Z` →
+  workflow прогоняет typecheck+тесты, собирает `app` и `web`, пушит в ghcr
+  как `X.Y.Z` + `latest`.
+- **Ручной прогон**: вкладка Actions → workflow «Release» → `Run workflow`,
+  опционально указать `ref` (ветку/тег/SHA). Даёт теги `latest` + `sha-xxxxxxx`.
+
+Разовая настройка репозитория (Settings):
+- **Variables** (Settings → Secrets and variables → Actions → Variables) —
+  несекретные, инлайнятся в web-бандл:
+  - `VITE_VAPID_PUBLIC_KEY` — публичный VAPID-ключ (= `VAPID_PUBLIC`);
+  - `VITE_TG_BOT` — имя бота без `@`.
+- **Видимость пакетов**: после первого пуша открыть ghcr-пакеты
+  `village-emergency-app` и `village-emergency-web` → Package settings →
+  Change visibility → **Public** (чтобы VM тянула без `docker login`).
+
+Секретов в GitHub для сборки не требуется — пуш идёт встроенным `GITHUB_TOKEN`.
+Рантайм-секреты живут только в `.env` на VM и в CI не попадают.
 
 ## Переменные окружения
 
