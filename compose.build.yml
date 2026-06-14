@@ -1,0 +1,16 @@
+# Локальная сборка прод-образов. Использовать поверх docker-compose.yml:
+#   docker compose -f docker-compose.yml -f compose.build.yml up --build
+# image: из базового файла станет тегом локальной сборки; VITE_* берутся из .env.
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+  caddy:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+      args:
+        VITE_API_BASE: /api
+        VITE_VAPID_PUBLIC_KEY: ${VITE_VAPID_PUBLIC_KEY}
+        VITE_TG_BOT: ${VITE_TG_BOT}
