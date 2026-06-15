@@ -9,6 +9,7 @@ import { createRegistrationService } from "./auth/registration.js";
 import { createPushService } from "./services/push.js";
 import { createBot } from "./auth/telegram.js";
 import { buildApp } from "./http/app.js";
+import { log } from "./logger.js";
 
 const env = parseEnv();
 await runMigrations(env.DATABASE_URL);
@@ -48,4 +49,4 @@ const app = buildApp(ctx);
 
 void bot.start();
 serve({ fetch: app.fetch, port: env.PORT });
-console.log(`village-emrg server on :${env.PORT}`);
+log.info({ port: env.PORT }, "server started");
