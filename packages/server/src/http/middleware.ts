@@ -1,9 +1,11 @@
 import type { MiddlewareHandler } from "hono";
 import { createJwt } from "../auth/jwt.js";
 import type { Role } from "@village/shared";
+import type { Logger } from "../logger.js";
 
 export interface AuthedVars {
   user: { id: string; role: Role };
+  log: Logger;
 }
 
 export function authMiddleware(jwtSecret: string): MiddlewareHandler<{ Variables: AuthedVars }> {
