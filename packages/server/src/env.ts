@@ -14,6 +14,9 @@ const EnvSchema = z.object({
   S3_ACCESS_KEY: z.string().min(1),
   S3_SECRET_KEY: z.string().min(1),
   PUBLIC_BASE_URL: z.string().url(),
+  LOG_LEVEL: z
+    .enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
+    .default("info"),
   PORT: z.coerce.number().int().positive().default(8787),
 });
 
