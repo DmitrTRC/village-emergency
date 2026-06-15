@@ -158,3 +158,22 @@ docker compose up -d
 `BOOTSTRAP_COMMANDER_TG`, `VAPID_PUBLIC/PRIVATE/SUBJECT`,
 `S3_ENDPOINT/REGION/BUCKET/ACCESS_KEY/SECRET_KEY`, `PUBLIC_BASE_URL`, `PORT`.
 Деплой/сборка: `DOMAIN`, `VITE_VAPID_PUBLIC_KEY`, `VITE_TG_BOT`.
+
+## Восстановление из бэкапа
+
+Дампы лежат в `s3://$S3_BUCKET/$BACKUP_S3_PREFIX/village-emrg-YYYYMMDD-HHMM.sql.gz`.
+
+    mc alias set store "$S3_ENDPOINT" "$S3_ACCESS_KEY" "$S3_SECRET_KEY"
+    mc ls store/$S3_BUCKET/$BACKUP_S3_PREFIX        # выбрать нужный дамп
+    mc cp store/$S3_BUCKET/$BACKUP_S3_PREFIX/village-emrg-YYYYMMDD-HHMM.sql.gz .
+    gunzip village-emrg-YYYYMMDD-HHMM.sql.gz
+    psql "$DATABASE_URL" < village-emrg-YYYYMMDD-HHMM.sql
+
+ВНИМАНИЕ: restore перетирает текущие данные. Делать только на пустую/проверочную БД
+или после осознанного решения.
+
+### Ручная проверка sidecar (smoke)
+
+    docker compose up -d --build backup
+    docker compose exec backup /usr/local/bin/backup.sh   # разовый прогон
+    mc ls store/$S3_BUCKET/$BACKUP_S3_PREFIX               # дамп появился
