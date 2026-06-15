@@ -177,3 +177,33 @@ docker compose up -d
     docker compose up -d --build backup
     docker compose exec backup /usr/local/bin/backup.sh   # разовый прогон
     mc ls store/$S3_BUCKET/$BACKUP_S3_PREFIX               # дамп появился
+
+## Health-ping (внешний наблюдатель)
+
+Запускается НЕ на сервере, а на машине оператора (Mac), чтобы поймать падение
+самого сервера. Канал алерта — отдельный «алертовый» бот (не прод-бот).
+
+### Завести алерт-бота (единственный ручной шаг)
+
+1. В Telegram открыть @BotFather → `/newbot` → задать имя и username.
+2. Скопировать выданный токен.
+3. Узнать chat_id:
+
+       ALERT_BOT_TOKEN=<токен> sh scripts/alert-bot-setup.sh
+
+### Конфиг на Mac
+
+Создать `~/.config/village-emrg/health-ping.env` (вне репозитория, 0600):
+
+    HEALTH_URL=https://village.example.ru/health
+    ALERT_BOT_TOKEN=<токен алерт-бота>
+    ALERT_CHAT_ID=<chat_id командира>
+
+### Расписание
+
+cron (`crontab -e`):
+
+    */5 * * * * /полный/путь/scripts/health-ping.sh
+
+Альтернатива — launchd: `~/Library/LaunchAgents/ru.village-emrg.healthping.plist`
+с `StartInterval` 300 и `ProgramArguments` на скрипт; загрузить `launchctl load`.
