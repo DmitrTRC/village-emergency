@@ -158,3 +158,52 @@ docker compose up -d
 `BOOTSTRAP_COMMANDER_TG`, `VAPID_PUBLIC/PRIVATE/SUBJECT`,
 `S3_ENDPOINT/REGION/BUCKET/ACCESS_KEY/SECRET_KEY`, `PUBLIC_BASE_URL`, `PORT`.
 Деплой/сборка: `DOMAIN`, `VITE_VAPID_PUBLIC_KEY`, `VITE_TG_BOT`.
+
+## Восстановление из бэкапа
+
+Дампы лежат в `s3://$S3_BUCKET/$BACKUP_S3_PREFIX/village-emrg-YYYYMMDD-HHMM.sql.gz`.
+
+    mc alias set store "$S3_ENDPOINT" "$S3_ACCESS_KEY" "$S3_SECRET_KEY"
+    mc ls store/$S3_BUCKET/$BACKUP_S3_PREFIX        # выбрать нужный дамп
+    mc cp store/$S3_BUCKET/$BACKUP_S3_PREFIX/village-emrg-YYYYMMDD-HHMM.sql.gz .
+    gunzip village-emrg-YYYYMMDD-HHMM.sql.gz
+    psql "$DATABASE_URL" < village-emrg-YYYYMMDD-HHMM.sql
+
+ВНИМАНИЕ: restore перетирает текущие данные. Делать только на пустую/проверочную БД
+или после осознанного решения.
+
+### Ручная проверка sidecar (smoke)
+
+    docker compose up -d --build backup
+    docker compose exec backup /usr/local/bin/backup.sh   # разовый прогон
+    mc ls store/$S3_BUCKET/$BACKUP_S3_PREFIX               # дамп появился
+
+## Health-ping (внешний наблюдатель)
+
+Запускается НЕ на сервере, а на машине оператора (Mac), чтобы поймать падение
+самого сервера. Канал алерта — отдельный «алертовый» бот (не прод-бот).
+
+### Завести алерт-бота (единственный ручной шаг)
+
+1. В Telegram открыть @BotFather → `/newbot` → задать имя и username.
+2. Скопировать выданный токен.
+3. Узнать chat_id:
+
+       ALERT_BOT_TOKEN=<токен> sh scripts/alert-bot-setup.sh
+
+### Конфиг на Mac
+
+Создать `~/.config/village-emrg/health-ping.env` (вне репозитория, 0600):
+
+    HEALTH_URL=https://village.example.ru/health
+    ALERT_BOT_TOKEN=<токен алерт-бота>
+    ALERT_CHAT_ID=<chat_id командира>
+
+### Расписание
+
+cron (`crontab -e`):
+
+    */5 * * * * /полный/путь/scripts/health-ping.sh
+
+Альтернатива — launchd: `~/Library/LaunchAgents/ru.village-emrg.healthping.plist`
+с `StartInterval` 300 и `ProgramArguments` на скрипт; загрузить `launchctl load`.

@@ -13,5 +13,6 @@ export default defineConfig({
     hookTimeout: 120_000,
     pool: "forks",
     fileParallelism: false,
+    env: { LOG_LEVEL: "silent" },
   },
 });

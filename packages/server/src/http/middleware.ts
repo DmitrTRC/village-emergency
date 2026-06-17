@@ -1,9 +1,11 @@
 import type { MiddlewareHandler } from "hono";
 import { createJwt } from "../auth/jwt.js";
 import type { Role } from "@village/shared";
+import { log, type Logger } from "../logger.js";
 
 export interface AuthedVars {
   user: { id: string; role: Role };
+  log: Logger;
 }
 
 export function authMiddleware(jwtSecret: string): MiddlewareHandler<{ Variables: AuthedVars }> {
@@ -22,6 +24,8 @@ export function authMiddleware(jwtSecret: string): MiddlewareHandler<{ Variables
 }
 
 export const errorHandler = (err: Error, c: import("hono").Context) => {
+  const l = (c.get("log") as Logger | undefined) ?? log;
+  l.error({ err }, "request error");
   const status = /forbidden/.test(err.message) ? 403
     : /not found/.test(err.message) ? 404
     : /illegal transition/.test(err.message) ? 409

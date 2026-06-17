@@ -24,6 +24,14 @@ services:
       - caddy_config:/config
     depends_on:
       - app
+  backup:
+    build:
+      context: ./ops/backup
+      args:
+        PG_MAJOR: ${PG_MAJOR:-17}
+    image: village-emergency-backup:local
+    env_file: .env
+    restart: unless-stopped
 
 volumes:
   caddy_data:

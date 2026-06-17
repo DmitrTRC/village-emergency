@@ -7,10 +7,12 @@ import { mediaRoutes } from "./routes/media.js";
 import { eventsRoutes } from "./routes/events.js";
 import { pushRoutes } from "./routes/push.js";
 import { authRoutes } from "./routes/auth.js";
+import { requestLogger } from "./logging.js";
 
 export function buildApp(ctx: AppContext): Hono<{ Variables: AuthedVars }> {
   const app = new Hono<{ Variables: AuthedVars }>();
   app.onError(errorHandler);
+  app.use("*", requestLogger());
 
   app.get("/health", (c) => c.json({ ok: true }));
 
