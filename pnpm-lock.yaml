@@ -83,7 +83,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.2.6
-        version: 3.2.6(@types/node@22.19.21)(jsdom@25.0.1)(terser@5.48.0)
+        version: 3.2.6(@types/node@22.19.21)(jsdom@25.0.1)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
 
   packages/shared:
     dependencies:
@@ -96,7 +96,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.2.6
-        version: 3.2.6(@types/node@22.19.21)(jsdom@25.0.1)(terser@5.48.0)
+        version: 3.2.6(@types/node@22.19.21)(jsdom@25.0.1)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
 
   packages/web:
     dependencies:
@@ -139,7 +139,7 @@ importers:
         version: 18.3.7(@types/react@18.3.31)
       '@vitejs/plugin-react':
         specifier: ^4.3.1
-        version: 4.7.0(vite@5.4.21(@types/node@22.19.21)(terser@5.48.0))
+        version: 4.7.0(vite@6.4.3(@types/node@22.19.21)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))
       fake-indexeddb:
         specifier: ^6.0.0
         version: 6.2.5
@@ -150,14 +150,14 @@ importers:
         specifier: ^5.6.0
         version: 5.9.3
       vite:
-        specifier: ^5.4.0
-        version: 5.4.21(@types/node@22.19.21)(terser@5.48.0)
+        specifier: ^6.4.3
+        version: 6.4.3(@types/node@22.19.21)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
       vite-plugin-pwa:
         specifier: ^0.20.5
-        version: 0.20.5(vite@5.4.21(@types/node@22.19.21)(terser@5.48.0))(workbox-build@7.4.1(@types/babel__core@7.20.5))(workbox-window@7.4.1)
+        version: 0.20.5(vite@6.4.3(@types/node@22.19.21)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(workbox-build@7.4.1(@types/babel__core@7.20.5))(workbox-window@7.4.1)
       vitest:
         specifier: ^3.2.6
-        version: 3.2.6(@types/node@22.19.21)(jsdom@25.0.1)(terser@5.48.0)
+        version: 3.2.6(@types/node@22.19.21)(jsdom@25.0.1)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
       workbox-background-sync:
         specifier: ^7.3.0
         version: 7.4.1
@@ -3884,6 +3884,46 @@ packages:
       terser:
         optional: true
 
+  vite@6.4.3:
+    resolution: {integrity: sha512-NTKlcQjlAK7MlQoyb6LgaqHc8sso/pVyUJYWMws3jg21uTJw/LddqIFPcPqP6PzpgbIcZyKI85sFE4HBrQDA8A==}
+    engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': ^18.0.0 || ^20.0.0 || >=22.0.0
+      jiti: '>=1.21.0'
+      less: '*'
+      lightningcss: ^1.21.0
+      sass: '*'
+      sass-embedded: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.16.0
+      tsx: ^4.8.1
+      yaml: ^2.4.2
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      jiti:
+        optional: true
+      less:
+        optional: true
+      lightningcss:
+        optional: true
+      sass:
+        optional: true
+      sass-embedded:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+      tsx:
+        optional: true
+      yaml:
+        optional: true
+
   vitest@3.2.6:
     resolution: {integrity: sha512-xejya+bT/j/+R/AGa1XOfRxLmNUlLtlwjRsFUILF+xHfzElmGcmFydy2gqqIrd62ptIEfwVMofd19uNWD9L7Nw==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
@@ -5869,7 +5909,7 @@ snapshots:
     dependencies:
       '@types/node': 22.19.21
 
-  '@vitejs/plugin-react@4.7.0(vite@5.4.21(@types/node@22.19.21)(terser@5.48.0))':
+  '@vitejs/plugin-react@4.7.0(vite@6.4.3(@types/node@22.19.21)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))':
     dependencies:
       '@babel/core': 7.29.7
       '@babel/plugin-transform-react-jsx-self': 7.29.7(@babel/core@7.29.7)
@@ -5877,7 +5917,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.27
       '@types/babel__core': 7.20.5
       react-refresh: 0.17.0
-      vite: 5.4.21(@types/node@22.19.21)(terser@5.48.0)
+      vite: 6.4.3(@types/node@22.19.21)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -7960,15 +8000,16 @@ snapshots:
 
   uuidv7@1.2.1: {}
 
-  vite-node@3.2.4(@types/node@22.19.21)(terser@5.48.0):
+  vite-node@3.2.4(@types/node@22.19.21)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0):
     dependencies:
       cac: 6.7.14
       debug: 4.4.3
       es-module-lexer: 1.7.0
       pathe: 2.0.3
-      vite: 5.4.21(@types/node@22.19.21)(terser@5.48.0)
+      vite: 6.4.3(@types/node@22.19.21)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
     transitivePeerDependencies:
       - '@types/node'
+      - jiti
       - less
       - lightningcss
       - sass
@@ -7977,13 +8018,15 @@ snapshots:
       - sugarss
       - supports-color
       - terser
+      - tsx
+      - yaml
 
-  vite-plugin-pwa@0.20.5(vite@5.4.21(@types/node@22.19.21)(terser@5.48.0))(workbox-build@7.4.1(@types/babel__core@7.20.5))(workbox-window@7.4.1):
+  vite-plugin-pwa@0.20.5(vite@6.4.3(@types/node@22.19.21)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(workbox-build@7.4.1(@types/babel__core@7.20.5))(workbox-window@7.4.1):
     dependencies:
       debug: 4.4.3
       pretty-bytes: 6.1.1
       tinyglobby: 0.2.17
-      vite: 5.4.21(@types/node@22.19.21)(terser@5.48.0)
+      vite: 6.4.3(@types/node@22.19.21)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
       workbox-build: 7.4.1(@types/babel__core@7.20.5)
       workbox-window: 7.4.1
     transitivePeerDependencies:
@@ -7999,7 +8042,22 @@ snapshots:
       fsevents: 2.3.3
       terser: 5.48.0
 
-  vitest@3.2.6(@types/node@22.19.21)(jsdom@25.0.1)(terser@5.48.0):
+  vite@6.4.3(@types/node@22.19.21)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0):
+    dependencies:
+      esbuild: 0.25.12
+      fdir: 6.5.0(picomatch@4.0.4)
+      picomatch: 4.0.4
+      postcss: 8.5.15
+      rollup: 4.62.0
+      tinyglobby: 0.2.17
+    optionalDependencies:
+      '@types/node': 22.19.21
+      fsevents: 2.3.3
+      terser: 5.48.0
+      tsx: 4.22.4
+      yaml: 2.9.0
+
+  vitest@3.2.6(@types/node@22.19.21)(jsdom@25.0.1)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0):
     dependencies:
       '@types/chai': 5.2.3
       '@vitest/expect': 3.2.6
@@ -8022,12 +8080,13 @@ snapshots:
       tinypool: 1.1.1
       tinyrainbow: 2.0.0
       vite: 5.4.21(@types/node@22.19.21)(terser@5.48.0)
-      vite-node: 3.2.4(@types/node@22.19.21)(terser@5.48.0)
+      vite-node: 3.2.4(@types/node@22.19.21)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 22.19.21
       jsdom: 25.0.1
     transitivePeerDependencies:
+      - jiti
       - less
       - lightningcss
       - msw
@@ -8037,6 +8096,8 @@ snapshots:
       - sugarss
       - supports-color
       - terser
+      - tsx
+      - yaml
 
   w3c-xmlserializer@5.0.0:
     dependencies:
