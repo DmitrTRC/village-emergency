@@ -15,20 +15,20 @@
     "seed:houses": "tsx src/seed-houses.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1068.0",
-    "@aws-sdk/s3-request-presigner": "^3.1068.0",
-    "@hono/node-server": "^2.0.5",
-    "@hono/zod-validator": "^0.8.0",
+    "@aws-sdk/client-s3": "^3.1126.0",
+    "@aws-sdk/s3-request-presigner": "^3.1126.0",
+    "@hono/node-server": "^2.1.1",
+    "@hono/zod-validator": "^0.9.1",
     "@village/shared": "workspace:*",
     "drizzle-orm": "^0.45.2",
-    "grammy": "^1.44.0",
-    "hono": "^4.6.0",
-    "jose": "^6.2.3",
+    "grammy": "^1.46.0",
+    "hono": "^4.13.5",
+    "jose": "^6.2.10",
     "pino": "^9",
     "postgres": "^3.4.0",
     "uuidv7": "^1.0.0",
     "web-push": "^3.6.0",
-    "zod": "^4.4.3"
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@testcontainers/postgresql": "^12.0.1",
